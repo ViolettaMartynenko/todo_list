@@ -24,11 +24,11 @@ class TasksController < ApplicationController
   # POST /tasks
   # POST /tasks.json
   def create
-    @task = Task.new(task_params)
+    @task = Task.new(task_params.merge({list_id: params[:list_id]}))
 
     respond_to do |format|
-      if @task.save
-        format.html { redirect_to @task, notice: 'Task was successfully created.' }
+      if @task.save 
+        format.html { redirect_to list_path({id: @task.list_id}), notice: 'Task was successfully created.' }
         format.json { render :show, status: :created, location: @task }
       else
         format.html { render :new }
@@ -69,6 +69,6 @@ class TasksController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def task_params
-      params.require(:task).permit(:title, :completeness)
+      params.require(:task).permit(:title, :completeness, :list_id)
     end
 end

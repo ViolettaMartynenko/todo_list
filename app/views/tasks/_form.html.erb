@@ -1,4 +1,4 @@
-<%= form_with(model: task, local: true, url: list_tasks_path) do |form| %>
+<%= form_with(model: task, local: true, url: url) do |form| %>
   <% if task.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(task.errors.count, "error") %> prohibited this task from being saved:</h2>
@@ -16,10 +16,6 @@
     <%= form.text_field :title %>
   </div>
 
-  <div class="field">
-    <%= form.label :completeness %>
-    <%= form.check_box :completeness %>
-  </div>
 
   <div class="actions">
     <%= form.submit %>

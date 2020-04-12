@@ -1,16 +1,7 @@
 class TasksController < ApplicationController
-  before_action :set_task, only: [:show, :edit, :update, :destroy]
+  before_action :load_list, except: [:destroy, :edit, :update]
+  before_action :set_task, only: [:edit, :update, :destroy, :completeness]
 
-  # GET /tasks
-  # GET /tasks.json
-  def index
-    @tasks = Task.all
-  end
-
-  # GET /tasks/1
-  # GET /tasks/1.json
-  def show
-  end
 
   # GET /tasks/new
   def new
@@ -28,7 +19,7 @@ class TasksController < ApplicationController
 
     respond_to do |format|
       if @task.save 
-        format.html { redirect_to list_path({id: @task.list_id}), notice: 'Task was successfully created.' }
+        format.html { redirect_to list_path({id: @list.id}), notice: 'Task was successfully created.' }
         format.json { render :show, status: :created, location: @task }
       else
         format.html { render :new }
@@ -42,7 +33,7 @@ class TasksController < ApplicationController
   def update
     respond_to do |format|
       if @task.update(task_params)
-        format.html { redirect_to @task, notice: 'Task was successfully updated.' }
+        format.html { redirect_to list_url(id: @task.list_id), notice: 'Task was successfully updated.' }
         format.json { render :show, status: :ok, location: @task }
       else
         format.html { render :edit }
@@ -56,10 +47,24 @@ class TasksController < ApplicationController
   def destroy
     @task.destroy
     respond_to do |format|
-      format.html { redirect_to tasks_url, notice: 'Task was successfully destroyed.' }
+      format.html { redirect_to list_url(id: @task.list_id), notice: 'Task was successfully destroyed.' }
       format.json { head :no_content }
     end
   end
+
+  # PATCH /lists/1/tasks/2/completeness
+  def completeness
+    task_completeness = @task.completeness
+    @task.update(completeness: !task_completeness)
+    message_notice = 
+      if @task.completeness == true 
+        {notice: "You have done it!"}
+      else
+        {notice: "Task is not completed"}
+      end
+    redirect_to(list_url(id: @task.list_id), message_notice)
+  end
+
 
   private
     # Use callbacks to share common setup or constraints between actions.
@@ -67,8 +72,12 @@ class TasksController < ApplicationController
       @task = Task.find(params[:id])
     end
 
+    def load_list
+      @list = List.find params[:list_id]
+    end
+
     # Only allow a list of trusted parameters through.
     def task_params
-      params.require(:task).permit(:title, :completeness, :list_id)
+      params.require(:task).permit(:title, :list_id)
     end
 end

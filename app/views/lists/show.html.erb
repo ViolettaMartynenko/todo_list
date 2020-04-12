@@ -8,9 +8,32 @@
 <%= link_to 'Edit', edit_list_path(@list) %> |
 <%= link_to 'Back', lists_path %>
 
-<p id="notice"><%= notice %></p>
 
 <h1>Tasks</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Title</th>
+      <th>Completeness</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @tasks_incomplete.each do |task| %>
+      <tr>
+        <td><%= task.title %></td>
+        <td><%= task.completeness %></td>
+        <td><%= link_to 'Done', completeness_list_task_path(list_id: @list.id, id: task.id), method: :patch %>
+        <td><%= link_to 'Edit', edit_list_task_path(list_id: @list.id, id: task.id) %></td>
+        <td><%= link_to 'Destroy', list_task_path(list_id: @list.id, id: task.id), method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
 
 <table>
   <thead>
@@ -26,15 +49,13 @@
       <tr>
         <td><%= task.title %></td>
         <td><%= task.completeness %></td>
-        <td><%= link_to 'Done', completeness_list_task_path(list_id: @list.id, id: task.id), method: :patch %>
+        <td><%= link_to 'Undone', completeness_list_task_path(list_id: @list.id, id: task.id), method: :patch %>
         <td><%= link_to 'Edit', edit_list_task_path(list_id: @list.id, id: task.id) %></td>
         <td><%= link_to 'Destroy', list_task_path(list_id: @list.id, id: task.id), method: :delete, data: { confirm: 'Are you sure?' } %></td>
       </tr>
     <% end %>
   </tbody>
 </table>
-
-<br>
 
 <%= link_to 'New Task', new_list_task_path(@list.id) %>
 

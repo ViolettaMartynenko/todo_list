@@ -10,7 +10,8 @@ class ListsController < ApplicationController
   # GET /lists/1
   # GET /lists/1.json
   def show
-    @tasks = @list.tasks
+    @tasks = @list.tasks.where(completeness: true)
+    @tasks_incomplete = @list.tasks.where(completeness: false)
   end
 
   # GET /lists/new
